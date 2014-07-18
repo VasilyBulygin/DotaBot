@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfDotaObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <DotaObject>
+    <Name>FindButton</Name>
+    <Top>217</Top>
+    <Left>126</Left>
+    <Width>5</Width>
+    <Height>20</Height>
+    <HitPoint>
+      <X>219</X>
+      <Y>128</Y>
+    </HitPoint>
+    <PicturePath>FindButton.bmp</PicturePath>
+  </DotaObject>
+  <DotaObject>
+    <Name>AcceptButton</Name>
+    <Top>170</Top>
+    <Left>219</Left>
+    <Width>5</Width>
+    <Height>20</Height>
+    <HitPoint>
+      <X>172</X>
+      <Y>221</Y>
+    </HitPoint>
+    <PicturePath>AcceptButton.bmp</PicturePath>
+  </DotaObject>
+</ArrayOfDotaObject>
