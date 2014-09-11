@@ -380,7 +380,7 @@ namespace bot
                 if (dotaObjects["SmileInHeroPick"].Availible(shot))//Доступен экран с выбором героя
                 {
                     PostMsg(this.PID, "SmileInHeroPick availible");
-                    isHelpDisabled = false;
+                    isHelpDisabled = false; 
                     Thread.Sleep(2000);
 
                     //Пока недоступна кнопка репика героя, т. е. герой еще не пикнут
