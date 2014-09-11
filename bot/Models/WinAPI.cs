@@ -18,10 +18,12 @@ namespace bot
         public const uint MK_RBUTTON = 0x0002;
         public const uint WM_RBUTTONDOWN = 0x0204;
         public const uint WM_RBUTTONUP = 0x0205;
+        public const int SRCCOPY = 13369376;
 
+        public static AutoItX3Lib.AutoItX3 au3 = new AutoItX3Lib.AutoItX3();
 
         [DllImport("User32.DLL")]
-        static extern bool PostMessage(IntPtr hWnd, uint Msg, uint wParam, int lParam);
+        public static extern bool PostMessage(IntPtr hWnd, uint Msg, uint wParam, int lParam);
 
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, uint Msg, uint wParam, int lParam);
@@ -34,6 +36,16 @@ namespace bot
 
         [DllImport("user32.dll")]
         static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        [DllImport("gdi32.dll", EntryPoint = "DeleteDC")]
+        public static extern IntPtr DeleteDC(IntPtr hDc);
+
+        [DllImport("gdi32.dll", EntryPoint = "CreateCompatibleBitmap")]
+        public static extern IntPtr CreateCompatibleBitmap(IntPtr hdc,
+            int nWidth, int nHeight);
+
+        [DllImport("gdi32.dll", EntryPoint = "CreateCompatibleDC")]
+        public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
 
         [DllImport("gdi32.dll", EntryPoint = "SelectObject")]
         public static extern System.IntPtr SelectObject(
@@ -98,26 +110,25 @@ namespace bot
         {
             SIZE size;
             IntPtr hBitmap;
-            IntPtr hDC = PlatformInvokeUSER32.GetDC(hwnd);
-            IntPtr hMemDC = PlatformInvokeGDI32.CreateCompatibleDC(hDC);
+            IntPtr hDC = GetDC(hwnd);
+            IntPtr hMemDC = CreateCompatibleDC(hDC);
             size.cx = x2;
             size.cy = y2;
-            hBitmap = PlatformInvokeGDI32.CreateCompatibleBitmap
-                        (hDC, size.cx, size.cy);
+            hBitmap = CreateCompatibleBitmap(hDC, size.cx, size.cy);
             if (hBitmap != IntPtr.Zero)
             {
-                IntPtr hOld = (IntPtr)PlatformInvokeGDI32.SelectObject(hMemDC, hBitmap);
-                PlatformInvokeGDI32.BitBlt(hMemDC, 0, 0, size.cx, size.cy, hDC, x1, y1, PlatformInvokeGDI32.SRCCOPY);
-                PlatformInvokeGDI32.SelectObject(hMemDC, hOld);
+                IntPtr hOld = SelectObject(hMemDC, hBitmap);
+                BitBlt(hMemDC, 0, 0, size.cx, size.cy, hDC, x1, y1, SRCCOPY);
+                SelectObject(hMemDC, hOld);
                 //We delete the memory device context.
-                PlatformInvokeGDI32.DeleteDC(hMemDC);
+                DeleteDC(hMemDC);
                 //We release the screen device context.
-                PlatformInvokeUSER32.ReleaseDC(hwnd, hDC);
+                ReleaseDC(hwnd, hDC);
                 //Image is created by Image bitmap handle and stored in
                 //local variable.
                 Bitmap bmp = System.Drawing.Image.FromHbitmap(hBitmap);
                 //Release the memory to avoid memory leaks.
-                PlatformInvokeGDI32.DeleteObject(hBitmap);
+                DeleteObject(hBitmap);
                 //This statement runs the garbage collector manually.
                 GC.Collect();
                 //Return the bitmap 

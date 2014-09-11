@@ -26,9 +26,10 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -37,9 +38,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -47,8 +49,26 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AForge">
+      <HintPath>..\..\DetectTest\AForge.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Imaging">
+      <HintPath>..\..\DetectTest\AForge.Imaging.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Math">
+      <HintPath>..\..\DetectTest\AForge.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="KeraLua, Version=1.3.0.0, Culture=neutral, PublicKeyToken=04d04586786c6f34, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\KeraLua.dll</HintPath>
+    </Reference>
+    <Reference Include="NLua, Version=1.3.0.0, Culture=neutral, PublicKeyToken=8df2ab518030ea95, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\NLua.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -59,12 +79,23 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="VAMemory">
+      <HintPath>Lib\VAMemory.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\DotaBot.cs" />
     <Compile Include="Models\Constants.cs" />
-    <Compile Include="Models\DotaBotWorker.cs" />
+    <Compile Include="Models\DotaBotWorker\DotaBotWorker.cs" />
+    <Compile Include="Models\DotaBotWorker\DotaBotWorkerOptions.cs" />
+    <Compile Include="Models\DotaItem.cs" />
     <Compile Include="Models\DotaObject.cs" />
+    <Compile Include="Models\DotaShop.cs" />
+    <Compile Include="Models\Enums\BotStatus.cs" />
+    <Compile Include="Models\Hero.cs" />
+    <Compile Include="Models\HeroOnScreen.cs" />
+    <Compile Include="Models\Inventory.cs" />
+    <Compile Include="Models\LuaWorkerProxy.cs" />
     <Compile Include="Models\ShopItem.cs" />
     <Compile Include="Views\MainView.cs">
       <SubType>Form</SubType>
@@ -73,10 +104,9 @@
       <DependentUpon>MainView.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Helper.cs" />
-    <Compile Include="Models\IDotaBotWorker.cs" />
+    <Compile Include="Models\DotaBotWorker\IDotaBotWorker.cs" />
     <Compile Include="Models\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\ScreenCap.cs" />
     <Compile Include="Models\WinAPI.cs" />
     <EmbeddedResource Include="Views\MainView.resx">
       <DependentUpon>MainView.cs</DependentUpon>
@@ -89,6 +119,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -120,7 +151,22 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AutoItX3Lib">
+      <Guid>{F8937E53-D444-4E71-9275-35B64210CC3B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

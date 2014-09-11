@@ -19,15 +19,31 @@ namespace bot
         public int Height { get; set; }
         public Point HitPoint { get; set; }
         public string PicturePath { get; set; }
-
+        private object _locker = new object();
+        /// <summary>
+        /// Проверка на доступность объекта на скриншоте
+        /// </summary>
+        /// <param name="scr">Объект скриншота</param>
+        /// <returns>true - объект есть на скрине, false - его нет</returns>
         public bool Availible(Bitmap scr)
         {
-            if (scr != null)
-                return Helper.Compare2Bitmaps(Picture, scr.GetBitmapRegion(new Rectangle(this.Top, this.Left, this.Width, this.Height)));
-            else
-                return false;
+            lock (_locker)
+            {
+                if (scr != null)
+                    return Helper.Compare2Bitmaps(Picture,
+                        scr.GetBitmapRegion(new Rectangle(this.Top, this.Left, this.Width, this.Height)));
+                else
+                    return false;
+            }
         }
 
+        /// <summary>
+        /// Клик по заданным в объекте координатам
+        /// </summary>
+        /// <param name="hwnd">Хендл окна, в котором кликаем</param>
+        /// <param name="button">Кнопка - right или left</param>
+        /// <param name="post">Тип нажатия - PostMessage или нет(SendMessage)</param>
+        /// <param name="times">Количество нажатий(между ними 80 мсек)</param>
         public void Click(IntPtr hwnd, string button, bool post = true, byte times = 1)
         {
             if (post)

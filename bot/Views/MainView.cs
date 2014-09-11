@@ -20,6 +20,7 @@ namespace bot
     public partial class MainView : Form
     {
         private readonly DotaBot dotabot = new DotaBot();
+        private Process[] processes;
 
         public MainView()
         {
@@ -28,6 +29,10 @@ namespace bot
             dotabot.OnWorkerAdded += (PID) => { AddMsg(String.Format("Worker added for PID {0}", PID)); };
             dotabot.OnWorkerRemoved += (PID) => { AddMsg(String.Format("Worker with PID {0} removed", PID)); };
             dotabot.OnWorkerMsg += (PID, msg) => { AddMsg(String.Format("PID{0}: {1}", PID, msg)); };
+            processes = Process.GetProcessesByName("dota");
+            cbPID.DataSource = processes;
+            cbPID.ValueMember = "Id";
+            //comboBox1.DataSource = processes;
         }
 
 
@@ -35,8 +40,8 @@ namespace bot
         {
             this.Invoke((MethodInvoker)delegate
             {
-                listBox1.Items.Add(msg);
-                listBox1.TopIndex = listBox1.Items.Count - 1;
+                lbLog.Items.Add(msg);
+                lbLog.TopIndex = lbLog.Items.Count - 1;
             });
         }
 
@@ -54,35 +59,10 @@ namespace bot
             //276,297,5,10 - Кнопка Нет спасибо
             //145,361,4,10 - Кнопка Уровень+1
 
+
+            //93,385,3,3 - Трон Dire на минимапе в пике
             //147,472,52,4 - Регион опыта
             //320,406,2,10 - Регион проверки на текущее здоровье
-        }
-
-        private uint GetSum(IntPtr hwnd, int x1, int y1, int x2, int y2)
-        {
-            long result = 0xFFFFFF;
-            for (int i = x1; i < x2; i++)
-            {
-                for (int j = y1; j < y2; j++)
-                {
-                    result = result ^ _GetPixelColor(hwnd, i, j);
-                }
-            }
-            return (uint)result;
-        }
-
-        private uint _GetPixelColor(IntPtr hwnd, int x, int y)
-        {
-            
-            uint result = 0;
-            /*
-            IntPtr dc = GetDC(hwnd);
-            result = GetPixel(dc, x, y);
-            if (!ReleaseDC(hwnd, dc))
-            {
-                throw new Exception("No ReleaseDC");
-            }*/
-            return result;
         }
 
 
@@ -94,7 +74,7 @@ namespace bot
 
         private void btnAddWindow_Click(object sender, EventArgs e)
         {
-            dotabot.AddWorkerByPID(tbPID.Text);
+            dotabot.AddWorkerByPID(((int)cbPID.SelectedValue).ToString());
         }
 
         private void dgvWorkers_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -111,6 +91,17 @@ namespace bot
             {
                 dotabot.RemoveWorker(dgvWorkers.Rows[e.RowIndex].DataBoundItem as DotaBotWorker);
             }
+        }
+        private void dgvWorkers_SelectionChanged(object sender, EventArgs e)
+        {
+            pgWorkerProperties.SelectedObject = ((DotaBotWorker)dgvWorkers.SelectedRows[0].DataBoundItem).Options;
+        }
+
+        private void btnRefreshProcesses_Click(object sender, EventArgs e)
+        {
+            processes = Process.GetProcessesByName("dota");
+            cbPID.DataSource = processes;
+            cbPID.ValueMember = "Id";
         }
 
     }

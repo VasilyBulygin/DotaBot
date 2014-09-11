@@ -21,6 +21,12 @@ namespace bot
         public event RemoveWorkerEventHandler OnWorkerRemoved = delegate { };
         public event WorkerMsgEventHandler OnWorkerMsg = delegate { };
 
+        public DotaBot()
+        {
+
+        }
+
+
         public void AddWorkerByPID(string PID)
         {
             try
@@ -35,6 +41,7 @@ namespace bot
             {
                 var worker = new DotaBotWorker(PID);
                 worker.PostMsg += (pid, msg) => { OnWorkerMsg(pid, msg); };
+                worker.Exited += (sender, e) => { OnWorkerRemoved((sender as DotaBotWorker).PID); RemoveWorker(sender as DotaBotWorker); };
                 Workers.Add(worker);
                 OnWorkerAdded(PID);
             }
